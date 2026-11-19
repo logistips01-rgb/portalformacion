@@ -21,13 +21,13 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
+    "formacion",  # primero, para que sus plantillas personalicen la administración
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "formacion",
 ]
 
 MIDDLEWARE = [

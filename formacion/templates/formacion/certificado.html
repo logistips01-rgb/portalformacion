@@ -1,10 +1,11 @@
 {% extends "formacion/base.html" %}
+{% load static %}
 {% block titulo %}Certificado · {{ curso.titulo }}{% endblock %}
 {% block contenido %}
 <p class="miga no-imprimir"><a href="{% url 'formacion:curso' curso.codigo %}">{{ curso.titulo }}</a> › Certificado ·
   <button class="enlace" onclick="window.print()">Imprimir / guardar en PDF</button></p>
 <div class="certificado">
-  <p class="certificado__empresa">ALDELIS</p>
+  <img class="certificado__logo" src="{% static 'formacion/img/logo-aldelis.png' %}" alt="Aldelis">
   <h1>Certificado de formación</h1>
   <p>Se certifica que</p>
   <p class="certificado__nombre">{{ alumno.get_full_name|default:alumno.username }}</p>

@@ -122,6 +122,10 @@ gunicorn config.wsgi
 
 Pon un proxy HTTPS delante. SQLite es suficiente para cientos de usuarios; si crece, se cambia a PostgreSQL en `DATABASES`.
 
+## Traspaso a Informática
+
+La guía para conectar el portal con los servidores y bases de datos de la empresa está en [`docs/INFORMATICA.md`](docs/INFORMATICA.md).
+
 ## Integración con Microsoft 365 (opcional, siguiente fase)
 
 - **Inicio de sesión con Microsoft (Entra ID)** para el personal de oficina que tiene cuenta corporativa. Convive con el acceso DNI + PIN de los operarios.

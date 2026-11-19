@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block extrastyle %}{{ block.super }}
+<style>
+  :root, html[data-theme="light"], html[data-theme="dark"] {
+    --primary: #bf0d3e; --secondary: #960a31; --header-bg: #ffffff; --header-color: #333; --header-link-color: #bf0d3e;
+    --header-branding-color: #bf0d3e; --breadcrumbs-bg: #960a31; --link-fg: #bf0d3e; --link-hover-color: #960a31;
+    --link-selected-fg: #960a31; --button-bg: #bf0d3e; --button-hover-bg: #960a31;
+    --default-button-bg: #960a31; --default-button-hover-bg: #6f0824; --selected-row: #fbe8ed;
+  }
+  #header { border-bottom: 1px solid #eee; }
+  #site-name a, #site-name a:link, #site-name a:visited { color: #bf0d3e !important; font-weight: 600; }
+  .module h2, .module caption, .inline-group h2 { background: #bf0d3e !important; color: #fff !important; }
+  .module caption a, .module h2 a { color: #fff !important; }
+  #branding h1 img { height: 40px; vertical-align: middle; margin-right: 10px; }
+</style>
+{% endblock %}
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}"><img src="{% static 'formacion/img/logo-aldelis.png' %}" alt="Aldelis" style="height:40px;vertical-align:middle;margin-right:10px">Formación · Gestión</a></div>
+{% if user.is_anonymous %}{% include "admin/color_theme_toggle.html" %}{% endif %}
+{% endblock %}
+

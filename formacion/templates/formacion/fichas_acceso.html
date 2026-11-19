@@ -1,4 +1,5 @@
 {% extends "formacion/base.html" %}
+{% load static %}
 {% block titulo %}Fichas de acceso{% endblock %}
 {% block contenido %}
 <div class="no-imprimir">
@@ -11,7 +12,7 @@
 <div class="fichas">
 {% for f in fichas %}
   <div class="ficha">
-    <p class="ficha__marca">ALDELIS · Portal de Formación</p>
+    <p class="ficha__marca"><img src="{% static 'formacion/img/logo-aldelis.png' %}" alt="Aldelis"> Portal de Formación</p>
     <p class="ficha__nombre">{{ f.usuario.get_full_name|default:f.usuario.username }}</p>
     <p class="suave">{% if f.perfil.puesto %}{{ f.perfil.puesto.nombre }}{% elif f.perfil.empresa %}{{ f.perfil.empresa }}{% else %}{{ f.perfil.get_tipo_display }}{% endif %}</p>
     <dl>

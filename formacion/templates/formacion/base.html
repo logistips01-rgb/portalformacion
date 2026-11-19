@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}Formación{% endblock %} · Aldelis</title>
+  <meta name="theme-color" content="#bf0d3e">
+  <link rel="icon" href="{% static 'formacion/img/logo-aldelis.png' %}">
   <link rel="stylesheet" href="{% static 'formacion/estilos.css' %}">
 </head>
 <body>
 <header class="cabecera">
   <div class="contenedor cabecera__fila">
-    <a class="marca" href="{% url 'formacion:inicio' %}"><span class="marca__logo">A</span> Formación Aldelis</a>
+    <a class="marca" href="{% url 'formacion:inicio' %}"><img class="marca__logo" src="{% static 'formacion/img/logo-aldelis.png' %}" alt="Aldelis"><span class="marca__texto">Formación</span></a>
     {% if user.is_authenticated %}
     <nav class="menu">
       <a href="{% url 'formacion:inicio' %}">Mi formación</a>
