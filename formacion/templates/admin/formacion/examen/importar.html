@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Inicio</a> ›
+  <a href="{% url 'admin:formacion_examen_changelist' %}">Exámenes</a> ›
+  <a href="{% url 'admin:formacion_examen_change' examen.pk %}">{{ examen }}</a> › Importar preguntas
+</div>
+{% endblock %}
+{% block content %}
+<div style="max-width:780px">
+  <p>Prepara las preguntas en Excel con estas columnas (una pregunta por fila) y guárdalo como
+  <strong>CSV (delimitado por punto y coma)</strong>:</p>
+  <table>
+    <thead><tr><th>pregunta</th><th>opcion_a</th><th>opcion_b</th><th>opcion_c</th><th>opcion_d</th><th>correcta</th><th>explicacion</th></tr></thead>
+    <tbody><tr><td>¿Qué significa FEFO?</td><td>Lo primero que entra…</td><td>Lo primero que caduca, primero sale</td><td>…</td><td>…</td><td>B</td><td>(opcional)</td></tr></tbody>
+  </table>
+  <p>Puedes usar 2, 3, 4 o más opciones por pregunta. La columna <em>correcta</em> indica la letra de la opción correcta.
+  Hay una plantilla en <code>docs/plantilla_preguntas.csv</code>.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class="default" value="Importar">
+  </form>
+</div>
+{% endblock %}

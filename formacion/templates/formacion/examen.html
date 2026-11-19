@@ -1,0 +1,48 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Examen · {{ curso.titulo }}{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:curso' curso.codigo %}">{{ curso.titulo }}</a> › Examen</p>
+<h1>Examen · {{ curso.titulo }}</h1>
+<p class="suave">{{ preguntas|length }} preguntas · Una sola respuesta correcta por pregunta · Nota mínima {{ examen.nota_minima }}%</p>
+{% if segundos is not None %}<div class="reloj" id="reloj" data-segundos="{{ segundos }}">Tiempo restante: <strong>--:--</strong></div>{% endif %}
+<form method="post" id="form-examen">{% csrf_token %}
+  {% for item in preguntas %}
+  <fieldset class="tarjeta pregunta">
+    <legend>Pregunta {{ forloop.counter }}</legend>
+    <p class="pregunta__texto">{{ item.pregunta.enunciado|linebreaksbr }}</p>
+    {% for o in item.opciones %}
+      <label class="opcion"><input type="radio" name="p{{ item.pregunta.id }}" value="{{ o.id }}"> {{ o.texto }}</label>
+    {% endfor %}
+  </fieldset>
+  {% endfor %}
+  <div class="pie-examen">
+    <span id="contador" class="suave"></span>
+    <button class="boton" onclick="return confirmarEnvio()">Entregar examen</button>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  const total = {{ preguntas|length }};
+  const form = document.getElementById('form-examen');
+  function respondidas() { return new Set([...form.querySelectorAll('input[type=radio]:checked')].map(i => i.name)).size; }
+  function pinta() { document.getElementById('contador').textContent = respondidas() + ' de ' + total + ' respondidas'; }
+  form.addEventListener('change', pinta); pinta();
+  function confirmarEnvio() {
+    const faltan = total - respondidas();
+    return faltan === 0 || confirm('Te faltan ' + faltan + ' pregunta(s) por responder. ¿Entregar igualmente?');
+  }
+  const reloj = document.getElementById('reloj');
+  if (reloj) {
+    let s = parseInt(reloj.dataset.segundos, 10);
+    const tic = () => {
+      const m = Math.floor(s / 60), r = s % 60;
+      reloj.querySelector('strong').textContent = m + ':' + String(r).padStart(2, '0');
+      if (s <= 60) reloj.classList.add('reloj--fin');
+      if (s <= 0) { form.submit(); return; }
+      s--; setTimeout(tic, 1000);
+    };
+    tic();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}{{ curso.titulo }}{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:inicio' %}">Mi formación</a> › {{ curso.titulo }}</p>
+<section class="portada">
+  <div>
+    <span class="etiqueta">{{ curso.get_categoria_display }}</span>
+    <h1>{{ curso.titulo }}</h1>
+    {% if curso.descripcion %}<p>{{ curso.descripcion }}</p>{% endif %}
+    <p class="suave">Duración estimada: {{ curso.duracion_minutos }} min · Versión {{ curso.version }}
+      {% if matricula.fecha_limite and not matricula.completada %} · Fecha límite: {{ matricula.fecha_limite|date:"d/m/Y" }}{% endif %}</p>
+  </div>
+  <div class="resumen">
+    <div class="resumen__cifra">{{ p.porcentaje }}%</div>
+    {% include "formacion/_barra.html" with valor=p.porcentaje %}
+    {% if p.completado %}
+      <a class="boton" href="{% url 'formacion:certificado' curso.codigo %}">Ver certificado</a>
+    {% elif siguiente %}
+      <a class="boton" href="{% url 'formacion:tema' curso.codigo siguiente.id %}">{% if p.leidos %}Continuar{% else %}Empezar{% endif %}</a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="bloque">
+  <h2>1. Temario</h2>
+  <ol class="temas">
+  {% for t in p.temas %}
+    <li class="{% if t.id in p.leidos %}hecho{% endif %}">
+      <a href="{% url 'formacion:tema' curso.codigo t.id %}">{{ t.titulo }}</a>
+      <span class="suave">{% if t.archivo %}📄 {% endif %}{% if t.enlace_video or t.es_video %}▶ {% endif %}{% if t.id in p.leidos %}✓ Leído{% else %}Pendiente{% endif %}</span>
+    </li>
+  {% empty %}<li>Este curso aún no tiene temas.</li>{% endfor %}
+  </ol>
+</section>
+
+{% if p.examen %}
+<section class="bloque">
+  <h2>2. Examen tipo test</h2>
+  <div class="tarjeta">
+    {% if p.examen.instrucciones %}<p>{{ p.examen.instrucciones|linebreaksbr }}</p>{% endif %}
+    <ul class="datos">
+      <li>Nota mínima para aprobar: <strong>{{ p.examen.nota_minima }}%</strong></li>
+      <li>Intentos: <strong>{% if p.examen.intentos_maximos %}{{ p.intentos|length }} de {{ p.examen.intentos_maximos }}{% else %}{{ p.intentos|length }} (ilimitados){% endif %}</strong></li>
+      {% if p.examen.tiempo_limite_minutos %}<li>Tiempo máximo: <strong>{{ p.examen.tiempo_limite_minutos }} min</strong></li>{% endif %}
+    </ul>
+    {% if p.aprobado %}
+      <div class="aviso aviso--success">Examen aprobado.</div>
+    {% elif p.intentos_agotados %}
+      <div class="aviso aviso--error">Has agotado los intentos. Contacta con tu responsable de formación.</div>
+    {% elif not p.temario_completo %}
+      <p class="suave">Completa todos los temas para desbloquear el examen.</p>
+      <button class="boton" disabled>Hacer el examen</button>
+    {% else %}
+      <form method="post" action="{% url 'formacion:examen_iniciar' curso.codigo %}">{% csrf_token %}
+        <button class="boton">{% if p.intentos %}Repetir el examen{% else %}Hacer el examen{% endif %}</button>
+      </form>
+    {% endif %}
+    {% if p.intentos %}
+      <h3>Tus intentos</h3>
+      <ul class="datos">{% for i in p.intentos %}
+        <li><a href="{% url 'formacion:resultado' i.id %}">{{ i.inicio|date:"d/m/Y H:i" }}</a> · {{ i.puntuacion|floatformat:0 }}% · {% if i.aprobado %}Aprobado{% else %}No aprobado{% endif %}</li>
+      {% endfor %}</ul>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

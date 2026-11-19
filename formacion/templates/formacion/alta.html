@@ -1,0 +1,26 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Alta de empleados{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:seguimiento' %}">Seguimiento</a> › Alta de empleados</p>
+<h1>Alta de empleados</h1>
+<p class="suave">Cada persona entra al portal con su <strong>DNI</strong> y un <strong>PIN</strong> de 6 cifras, sin email ni cuenta corporativa.
+Al darla de alta se le asigna automáticamente el plan de formación de su puesto y se genera una ficha de acceso para imprimir o entregar.</p>
+<div class="dos-columnas">
+  <form method="post" class="tarjeta formulario">{% csrf_token %}
+    <h2>Una persona</h2>
+    <input type="hidden" name="modo" value="individual">
+    {{ form.as_p }}
+    <button class="boton">Dar de alta</button>
+  </form>
+  <form method="post" enctype="multipart/form-data" class="tarjeta formulario">{% csrf_token %}
+    <h2>Varias a la vez (Excel)</h2>
+    <input type="hidden" name="modo" value="masiva">
+    <p>En Excel, una fila por persona con estas columnas y guárdalo como <strong>CSV (delimitado por punto y coma)</strong>:</p>
+    <p><code>nombre;apellidos;dni;tipo;puesto;empresa;fecha_incorporacion</code></p>
+    <p class="suave">tipo = interno o externo · puesto = nombre tal cual aparece en el portal (p. ej. «Expediciones») · fecha en formato dd/mm/aaaa.
+    Si el DNI ya existe se actualizan sus datos. Hay una plantilla en <code>docs/plantilla_empleados.csv</code>.</p>
+    {{ form_masiva.as_p }}
+    <button class="boton">Importar</button>
+  </form>
+</div>
+{% endblock %}

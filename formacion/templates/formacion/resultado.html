@@ -1,0 +1,32 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Resultado · {{ curso.titulo }}{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:curso' curso.codigo %}">{{ curso.titulo }}</a> › Resultado</p>
+<section class="portada">
+  <div>
+    <h1>{% if intento.aprobado %}¡Aprobado!{% else %}No aprobado{% endif %}</h1>
+    <p>Has acertado <strong>{{ aciertos }} de {{ preguntas|length }}</strong> preguntas. Nota mínima: {{ examen.nota_minima }}%.</p>
+    {% if intento.aprobado and p.completado %}
+      <a class="boton" href="{% url 'formacion:certificado' curso.codigo %}">Ver certificado</a>
+    {% elif not intento.aprobado and not p.intentos_agotados and intento.usuario == user %}
+      <p class="suave">Repasa el temario y vuelve a intentarlo.</p>
+      <a class="boton" href="{% url 'formacion:curso' curso.codigo %}">Volver al curso</a>
+    {% endif %}
+  </div>
+  <div class="resumen"><div class="resumen__cifra {% if intento.aprobado %}ok{% else %}ko{% endif %}">{{ intento.puntuacion|floatformat:0 }}%</div></div>
+</section>
+<section class="bloque">
+  <h2>Revisión</h2>
+  {% for item in preguntas %}
+  <div class="tarjeta pregunta {% if item.respuesta.correcta %}pregunta--ok{% else %}pregunta--ko{% endif %}">
+    <p class="pregunta__texto"><strong>{{ forloop.counter }}.</strong> {{ item.pregunta.enunciado|linebreaksbr }}</p>
+    <p>Tu respuesta: {% if item.respuesta.opcion %}{{ item.respuesta.opcion.texto }}{% else %}<em>sin responder</em>{% endif %}
+      {% if item.respuesta.correcta %}✓{% else %}✗{% endif %}</p>
+    {% if mostrar_solucion and not item.respuesta.correcta %}
+      {% for o in item.pregunta.opciones.all %}{% if o.es_correcta %}<p>Respuesta correcta: <strong>{{ o.texto }}</strong></p>{% endif %}{% endfor %}
+    {% endif %}
+    {% if mostrar_solucion and item.pregunta.explicacion %}<p class="suave">{{ item.pregunta.explicacion }}</p>{% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

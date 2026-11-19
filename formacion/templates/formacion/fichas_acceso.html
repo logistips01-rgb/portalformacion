@@ -1,0 +1,26 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Fichas de acceso{% endblock %}
+{% block contenido %}
+<div class="no-imprimir">
+  <h1>Fichas de acceso</h1>
+  <div class="aviso aviso--warning">Los PIN solo se muestran ahora. Imprime o anota las fichas antes de salir de esta página.
+    Si alguien pierde su PIN, genera uno nuevo desde «Gestión › Usuarios» (acción «Generar PIN nuevo»).</div>
+  <p><button class="boton" onclick="window.print()">Imprimir fichas</button>
+     <a class="boton boton--secundario" href="{% url 'formacion:seguimiento' %}">Ir al seguimiento</a></p>
+</div>
+<div class="fichas">
+{% for f in fichas %}
+  <div class="ficha">
+    <p class="ficha__marca">ALDELIS · Portal de Formación</p>
+    <p class="ficha__nombre">{{ f.usuario.get_full_name|default:f.usuario.username }}</p>
+    <p class="suave">{% if f.perfil.puesto %}{{ f.perfil.puesto.nombre }}{% elif f.perfil.empresa %}{{ f.perfil.empresa }}{% else %}{{ f.perfil.get_tipo_display }}{% endif %}</p>
+    <dl>
+      <dt>Dirección</dt><dd>{{ request.scheme }}://{{ request.get_host }}</dd>
+      <dt>Usuario (DNI)</dt><dd><strong>{{ f.perfil.dni }}</strong></dd>
+      <dt>PIN</dt><dd>{% if f.pin %}<strong class="ficha__pin">{{ f.pin }}</strong>{% else %}<em>sin cambios (ya tenía PIN)</em>{% endif %}</dd>
+    </dl>
+    <p class="suave">No compartas tu PIN. Si lo olvidas, pide uno nuevo a RR. HH.</p>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

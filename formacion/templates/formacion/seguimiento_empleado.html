@@ -1,0 +1,34 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}{{ alumno.get_full_name|default:alumno.username }}{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:seguimiento' %}">Seguimiento</a> › {{ alumno.get_full_name|default:alumno.username }}</p>
+<section class="portada">
+  <div>
+    <h1>{{ alumno.get_full_name|default:alumno.username }}</h1>
+    <p class="suave">{{ perfil.get_tipo_display }}{% if perfil.puesto %} · {{ perfil.puesto }}{% endif %}{% if perfil.empresa %} · {{ perfil.empresa }}{% endif %} · Incorporación {{ perfil.fecha_incorporacion|date:"d/m/Y" }}</p>
+    <a class="boton boton--secundario" href="{% url 'admin:auth_user_change' alumno.id %}">Editar ficha</a>
+  </div>
+  <div class="resumen"><div class="resumen__cifra">{{ porcentaje }}%</div><div>{{ completados }} de {{ total }} cursos</div>
+    {% include "formacion/_barra.html" with valor=porcentaje %}</div>
+</section>
+{% for clave, g in grupos.items %}
+<section class="bloque"><h2>{{ clave }}</h2>
+<table class="tabla">
+  <thead><tr><th>Curso</th><th>Avance</th><th>Fecha límite</th><th>Completado</th><th>Nota</th><th></th></tr></thead>
+  <tbody>{% for e in g.elementos %}<tr>
+    <td>{{ e.curso.titulo }}</td>
+    <td class="celda-avance">{% include "formacion/_barra.html" with valor=e.progreso.porcentaje %}</td>
+    <td>{% if e.matricula.vencida %}<span class="pastilla pastilla--ko">{{ e.matricula.fecha_limite|date:"d/m/Y" }}</span>{% else %}{{ e.matricula.fecha_limite|date:"d/m/Y"|default:"—" }}{% endif %}</td>
+    <td>{{ e.matricula.fecha_completado|date:"d/m/Y"|default:"—" }}</td>
+    <td>{% if e.matricula.nota is not None %}{{ e.matricula.nota|floatformat:0 }}%{% else %}—{% endif %}</td>
+    <td>{% if e.matricula.completada %}<a href="{% url 'formacion:certificado_usuario' e.curso.codigo alumno.id %}">Certificado</a>{% endif %}</td>
+  </tr>{% endfor %}</tbody>
+</table></section>
+{% empty %}<p>Sin cursos asignados.</p>{% endfor %}
+{% if intentos %}
+<section class="bloque"><h2>Intentos de examen</h2>
+<table class="tabla"><thead><tr><th>Fecha</th><th>Curso</th><th>Nota</th><th>Resultado</th></tr></thead><tbody>
+{% for i in intentos %}<tr><td><a href="{% url 'formacion:resultado' i.id %}">{{ i.inicio|date:"d/m/Y H:i" }}</a></td><td>{{ i.examen.curso }}</td><td>{{ i.puntuacion|floatformat:0 }}%</td><td>{% if i.aprobado %}Aprobado{% else %}No aprobado{% endif %}</td></tr>{% endfor %}
+</tbody></table></section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Seguimiento{% endblock %}
+{% block contenido %}
+<h1>Seguimiento de la formación</h1>
+<form class="filtros tarjeta" method="get">
+  <input name="q" placeholder="Buscar nombre o empresa" value="{{ filtros.q|default:'' }}">
+  <select name="tipo"><option value="">Interno y externo</option>
+    {% for v, t in tipos %}<option value="{{ v }}" {% if filtros.tipo == v %}selected{% endif %}>{{ t }}</option>{% endfor %}</select>
+  <select name="puesto"><option value="">Todos los puestos</option>
+    {% for p in puestos %}<option value="{{ p.id }}" {% if filtros.puesto == p.id|stringformat:"s" %}selected{% endif %}>{{ p }}</option>{% endfor %}</select>
+  <select name="estado"><option value="">Cualquier estado</option>
+    <option value="pendiente" {% if filtros.estado == "pendiente" %}selected{% endif %}>Con cursos pendientes</option>
+    <option value="vencido" {% if filtros.estado == "vencido" %}selected{% endif %}>Con plazos vencidos</option>
+    <option value="completo" {% if filtros.estado == "completo" %}selected{% endif %}>Formación completa</option></select>
+  <button class="boton">Filtrar</button>
+  <a class="boton boton--secundario" href="?{{ request.GET.urlencode }}&formato=csv">Exportar a Excel (CSV)</a>
+</form>
+<div class="tabla-scroll">
+<table class="tabla">
+  <thead><tr><th>Empleado</th><th>Tipo</th><th>Puesto / empresa</th><th>Incorporación</th><th>Avance</th><th>Vencidos</th></tr></thead>
+  <tbody>
+  {% for f in filas %}
+    <tr>
+      <td><a href="{% url 'formacion:seguimiento_empleado' f.usuario.id %}">{{ f.usuario.get_full_name|default:f.usuario.username }}</a></td>
+      <td>{{ f.perfil.get_tipo_display }}</td>
+      <td>{% if f.perfil.tipo == "externo" %}{{ f.perfil.empresa|default:"—" }}{% else %}{{ f.perfil.puesto.nombre|default:"—" }}{% endif %}</td>
+      <td>{{ f.perfil.fecha_incorporacion|date:"d/m/Y" }}</td>
+      <td class="celda-avance">{{ f.hechos }}/{{ f.total }} {% include "formacion/_barra.html" with valor=f.porcentaje %}</td>
+      <td>{% if f.vencidos %}<span class="pastilla pastilla--ko">{{ f.vencidos }}</span>{% else %}—{% endif %}</td>
+    </tr>
+  {% empty %}<tr><td colspan="6">No hay empleados con esos filtros.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Certificado · {{ curso.titulo }}{% endblock %}
+{% block contenido %}
+<p class="miga no-imprimir"><a href="{% url 'formacion:curso' curso.codigo %}">{{ curso.titulo }}</a> › Certificado ·
+  <button class="enlace" onclick="window.print()">Imprimir / guardar en PDF</button></p>
+<div class="certificado">
+  <p class="certificado__empresa">ALDELIS</p>
+  <h1>Certificado de formación</h1>
+  <p>Se certifica que</p>
+  <p class="certificado__nombre">{{ alumno.get_full_name|default:alumno.username }}</p>
+  {% if perfil.dni %}<p>con DNI/NIE {{ perfil.dni }}</p>{% endif %}
+  {% if perfil.tipo == "externo" and perfil.empresa %}<p>de la empresa {{ perfil.empresa }}</p>{% endif %}
+  <p>ha completado satisfactoriamente el curso</p>
+  <p class="certificado__curso">{{ curso.titulo }}</p>
+  <p>con una duración estimada de {{ curso.duracion_minutos }} minutos{% if matricula.nota is not None %} y una calificación del {{ matricula.nota|floatformat:0 }}%{% endif %}.</p>
+  <p class="suave">Fecha: {{ matricula.fecha_completado|date:"d \d\e F \d\e Y" }} · Versión del temario {{ curso.version }} · Ref. {{ matricula.pk|stringformat:"06d" }}</p>
+</div>
+{% endblock %}

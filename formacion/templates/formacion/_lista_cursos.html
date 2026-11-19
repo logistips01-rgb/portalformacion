@@ -1,0 +1,31 @@
+{% for clave, g in grupos.items %}
+<section class="bloque">
+  <div class="bloque__cabecera">
+    <div>
+      <h2>{{ clave }}</h2>
+      {% if g.itinerario.descripcion %}<p class="suave">{{ g.itinerario.descripcion }}</p>{% endif %}
+    </div>
+    <div class="bloque__avance"><strong>{{ g.completados }}/{{ g.elementos|length }}</strong> completados
+      {% include "formacion/_barra.html" with valor=g.porcentaje %}</div>
+  </div>
+  <div class="rejilla">
+  {% for e in g.elementos %}
+    <a class="tarjeta curso {% if e.matricula.completada %}curso--hecho{% elif e.matricula.vencida %}curso--vencido{% endif %}"
+       href="{% if enlaces_staff %}{% url 'formacion:curso' e.curso.codigo %}{% else %}{{ e.curso.get_absolute_url }}{% endif %}">
+      <span class="etiqueta">{{ e.curso.get_categoria_display }}</span>
+      <h3>{{ e.curso.titulo }}</h3>
+      <p class="suave">{{ e.progreso.temas|length }} tema{{ e.progreso.temas|length|pluralize }}{% if e.progreso.examen %} · examen tipo test{% endif %} · {{ e.curso.duracion_minutos }} min</p>
+      {% include "formacion/_barra.html" with valor=e.progreso.porcentaje %}
+      <p class="curso__estado">
+        {% if e.matricula.completada %}✓ Completado el {{ e.matricula.fecha_completado|date:"d/m/Y" }}{% if e.matricula.nota is not None %} · nota {{ e.matricula.nota|floatformat:0 }}%{% endif %}
+        {% elif e.matricula.vencida %}Plazo vencido el {{ e.matricula.fecha_limite|date:"d/m/Y" }}
+        {% elif e.matricula.fecha_limite %}Completar antes del {{ e.matricula.fecha_limite|date:"d/m/Y" }}
+        {% else %}Sin fecha límite{% endif %}
+      </p>
+    </a>
+  {% endfor %}
+  </div>
+</section>
+{% empty %}
+<div class="tarjeta"><p>Todavía no tienes cursos asignados. Si acabas de incorporarte, RR. HH. te asignará tu plan de formación en breve.</p></div>
+{% endfor %}

@@ -1,0 +1,20 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Mi formación{% endblock %}
+{% block contenido %}
+<section class="portada">
+  <div>
+    <h1>Hola, {{ user.first_name|default:user.username }}</h1>
+    <p class="suave">
+      {% if perfil.tipo == "externo" %}Personal externo{% if perfil.empresa %} · {{ perfil.empresa }}{% endif %}
+      {% elif perfil.puesto %}{{ perfil.puesto }}{% else %}Personal interno{% endif %}
+    </p>
+  </div>
+  <div class="resumen">
+    <div class="resumen__cifra">{{ porcentaje }}%</div>
+    <div>{{ completados }} de {{ total }} cursos completados</div>
+    {% include "formacion/_barra.html" with valor=porcentaje %}
+  </div>
+</section>
+{% if vencidas %}<div class="aviso aviso--warning">Tienes {{ vencidas|length }} curso{{ vencidas|length|pluralize }} con el plazo vencido.</div>{% endif %}
+{% include "formacion/_lista_cursos.html" %}
+{% endblock %}

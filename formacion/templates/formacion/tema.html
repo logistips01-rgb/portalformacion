@@ -1,0 +1,30 @@
+{% extends "formacion/base.html" %}
+{% load formato %}
+{% block titulo %}{{ tema.titulo }}{% endblock %}
+{% block contenido %}
+<p class="miga"><a href="{% url 'formacion:inicio' %}">Mi formación</a> › <a href="{% url 'formacion:curso' curso.codigo %}">{{ curso.titulo }}</a> › Tema {{ numero }}</p>
+<article class="tarjeta tema">
+  <p class="suave">Tema {{ numero }} de {{ p.temas|length }}</p>
+  <h1>{{ tema.titulo }}</h1>
+  <div class="texto">{{ tema.contenido|temario }}</div>
+
+  {% if tema.archivo %}
+    {% if tema.es_pdf %}
+      <iframe class="visor" src="{% url 'formacion:material' tema.id %}" title="{{ tema.titulo }}"></iframe>
+    {% elif tema.es_video %}
+      <video class="visor" controls src="{% url 'formacion:material' tema.id %}"></video>
+    {% endif %}
+    <p><a class="boton boton--secundario" href="{% url 'formacion:material' tema.id %}?descargar=1">Descargar material</a></p>
+  {% endif %}
+  {% if tema.enlace_video %}
+    <p><a class="boton boton--secundario" href="{{ tema.enlace_video }}" target="_blank" rel="noopener">▶ Ver vídeo del tema</a></p>
+  {% endif %}
+
+  <div class="navegacion">
+    {% if anterior %}<a href="{% url 'formacion:tema' curso.codigo anterior.id %}">← Anterior</a>{% else %}<span></span>{% endif %}
+    <form method="post" action="{% url 'formacion:tema_leido' curso.codigo tema.id %}">{% csrf_token %}
+      <button class="boton">{% if leido %}{% if posterior %}Siguiente tema →{% else %}Volver al curso{% endif %}{% else %}He leído y entendido este tema{% if posterior %} →{% endif %}{% endif %}</button>
+    </form>
+  </div>
+</article>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "formacion/base.html" %}
+{% block titulo %}Acceso{% endblock %}
+{% block contenido %}
+<div class="tarjeta acceso">
+  <h1>Portal de Formación</h1>
+  <p class="suave">Entra con tu <strong>DNI</strong> y el <strong>PIN</strong> que te ha dado RR. HH.</p>
+  {% if form.errors %}<div class="aviso aviso--error">DNI o PIN incorrectos. Tras 5 intentos fallidos el acceso se bloquea 15 minutos.</div>{% endif %}
+  <form method="post">{% csrf_token %}
+    <label>DNI / NIE<input name="username" autocomplete="username" autocapitalize="characters" required autofocus value="{{ form.username.value|default:'' }}"></label>
+    <label>PIN<input type="password" name="password" inputmode="numeric" autocomplete="current-password" required></label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="boton boton--ancho">Entrar</button>
+  </form>
+  <p class="suave pequeno">Personal de oficina: puedes usar tu usuario y contraseña del portal.</p>
+</div>
+{% endblock %}
