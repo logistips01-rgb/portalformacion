@@ -69,10 +69,13 @@ class Command(BaseCommand):
 
         from formacion.altas import dar_de_alta
 
+        import os
+
         User = get_user_model()
         if not User.objects.filter(username="admin").exists():
-            User.objects.create_superuser("admin", "", "admin1234", first_name="Administración")
-            self.stdout.write("  Usuario admin / admin1234 (cámbialo)")
+            clave = os.environ.get("DEMO_ADMIN_PASSWORD", "admin1234")
+            User.objects.create_superuser("admin", "", clave, first_name="Administración")
+            self.stdout.write("  Usuario admin creado" + (" / admin1234 (cámbialo)" if clave == "admin1234" else " (contraseña en DEMO_ADMIN_PASSWORD)"))
         ejemplos = [
             ("Laura", "García Ruiz", "11111111H", "interno", "Recepción de mercancías", ""),
             ("Javier", "Martín Sanz", "22222222J", "interno", "Expediciones", ""),

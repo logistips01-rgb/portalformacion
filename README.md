@@ -97,6 +97,21 @@ Tests:
 
 > ⚠️ **El contenido de los cursos es un borrador de ejemplo** (marcado como tal en cada tema). Hay que sustituirlo por el temario oficial antes de usarlo con empleados reales.
 
+## Ver los avances en una dirección web (demo en Render.com)
+
+El repositorio incluye `render.yaml` para publicar una **demo** gratis:
+
+1. Crea una cuenta en [render.com](https://render.com) entrando con GitHub y autoriza el acceso a este repositorio.
+2. **New → Blueprint** → elige `portalformacion` y la rama de trabajo → **Apply**.
+3. En unos minutos tendrás una dirección del tipo `https://portalformacion.onrender.com`.
+
+Detalles de la demo:
+- Cada vez que se suben cambios a la rama, Render los publica solo.
+- Entrar como operario: DNI `11111111H`, `22222222J` o `33333333P`, PIN `123456`.
+- La contraseña de `admin` se genera sola. Está en Render → servicio → *Environment* → `DEMO_ADMIN_PASSWORD`.
+- En el plan gratuito, la primera visita tras un rato sin uso tarda unos 50 segundos en arrancar.
+- Los datos no son permanentes: al reiniciarse se recargan los de ejemplo. **No metas datos reales.**
+
 ## Producción
 
 Variables de entorno:
