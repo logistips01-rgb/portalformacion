@@ -8,6 +8,16 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Si existe un archivo .env junto a manage.py (no se sube a GitHub), se cargan
+# sus variables. Así se configura el servidor sin tocar el código.
+_env = BASE_DIR / ".env"
+if _env.exists():
+    for _linea in _env.read_text(encoding="utf-8").splitlines():
+        _linea = _linea.strip()
+        if _linea and not _linea.startswith("#") and "=" in _linea:
+            _clave, _valor = _linea.split("=", 1)
+            os.environ.setdefault(_clave.strip(), _valor.strip())
+
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "solo-para-desarrollo-cambiar-en-produccion",
@@ -19,10 +29,8 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     o.strip() for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
 ]
-# Render.com publica el nombre del servicio en esta variable.
-if os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
-    ALLOWED_HOSTS.append(os.environ["RENDER_EXTERNAL_HOSTNAME"])
-    CSRF_TRUSTED_ORIGINS.append(f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}")
+# Detrás de un proxy HTTPS (PythonAnywhere, IIS, Nginx…)
+if os.environ.get("DJANGO_DETRAS_DE_PROXY") == "1":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
